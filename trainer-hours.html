@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trainer Hours Submission</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #1e1e1e;
+      color: #dfd8ce;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #dfd8ce;
+      text-align: left;
+    }
+    select, input[type="text"], input[type="date"], input[type="number"] {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: none;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      background-color: #dfd8ce;
+      color: #1e1e1e;
+      cursor: pointer;
+      margin: 1rem 0.5rem;
+    }
+    button:hover {
+      background-color: #e5ded2;
+      box-shadow: 0 0 10px rgba(223, 216, 206, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    #totalHours {
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <img src="https://resolveperformance.com.au/wp-content/uploads/2024/10/RESOLVE-PERFORMANCE-site-logo.svg" alt="Resolve Performance Logo" style="max-width: 220px;">
+  </div>
+
+  <div class="container" id="trainerSelect" style="max-width: 400px;">
+    <h1>Select Your Name</h1>
+    <select id="trainerName" style="margin-bottom: 1rem; font-size: 1rem; padding: 0.75rem;">
+      <option value="">-- Select Trainer --</option>
+      <option value="Jo">Jo</option>
+      <option value="Nathan">Nathan</option>
+      <option value="Alexa">Alexa</option>
+      <option value="Mia">Mia</option>
+      <option value="James">James</option>
+    </select>
+    <div style="text-align: center;">
+      <button onclick="startSubmission()" style="font-size: 1.25rem;">Continue</button>
+    </div>
+  </div>
+
+  <div class="container hidden" id="hourForm">
+    <h2 id="formHeader">Submit Weekly Hours</h2>
+    <table id="hoursTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Task</th>
+          <th>Notes</th>
+          <th>Hours</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr>
+          <td><input type="date" /></td>
+          <td>
+            <select>
+              <option value="">-- Select Activity --</option>
+              <option>Marketing & Video Content</option>
+              <option>Team Training Sessions</option>
+              <option>Trainer Training</option>
+              <option>Meal Plans & Training Programs</option>
+              <option>Cleaning</option>
+              <option>Other</option>
+            </select>
+          </td>
+          <td><input type="text" placeholder="Details (optional)" /></td>
+          <td><input type="number" min="0" step="0.25" class="hourInput" /></td>
+        </tr>
+      </tbody>
+    </table>
+    <p id="errorDisplay" style="color: #ff6961; font-weight: 600; text-align: center; display: none;"></p>
+    <button onclick="addRow()">Add Another Row</button>
+    <button onclick="reviewSubmission()">Confirm</button>
+    <p id="totalHours">Total Hours: 0</p>
+  </div>
+
+  <div class="container hidden" id="confirmationPage">
+    <h1>Confirm Your Submission</h1>
+    <div id="summary"></div>
+    <button onclick="submitForm()">Confirm</button>
+    <button onclick="goBack()">Go Back</button>
+  </div>
+
+  <script>
+    let selectedTrainer = "";
+
+    function startSubmission() {
+      const name = document.getElementById("trainerName").value;
+      if (!name) return alert("Please select your name.");
+      selectedTrainer = name;
+      document.getElementById("formHeader").innerText = `Submit Weekly Hours — ${selectedTrainer}`;
+      document.getElementById("trainerSelect").classList.add("hidden");
+      document.getElementById("hourForm").classList.remove("hidden");
+    }
+
+    function addRow() {
+      const table = document.getElementById("tableBody");
+      const row = table.rows[0].cloneNode(true);
+      row.querySelectorAll("input, select").forEach(input => input.value = "");
+      table.appendChild(row);
+      updateTotal();
+    }
+
+    function updateTotal() {
+      let total = 0;
+      document.querySelectorAll(".hourInput").forEach(input => {
+        const val = parseFloat(input.value);
+        if (!isNaN(val)) total += val;
+      });
+      document.getElementById("totalHours").textContent = `Total Hours: ${total}`;
+    }
+
+    document.getElementById("tableBody").addEventListener("input", updateTotal);
+
+    function reviewSubmission() {
+      const rows = document.querySelectorAll("#tableBody tr");
+      let summaryHTML = `<h2>Trainer: ${selectedTrainer}</h2><ul>`;
+      let allValid = true;
+      let errorMsg = "";
+      rows.forEach((row, index) => {
+        row.style.border = "";
+        const rawDate = row.cells[0].querySelector("input").value;
+        const activity = row.cells[1].querySelector("select").value;
+        const hours = row.cells[3].querySelector("input").value;
+
+        if (!rawDate || !activity || !hours) {
+          allValid = false;
+          errorMsg += `Row ${index + 1}: Please fill in all required fields (Date, Task, Hours).\n`;
+          row.style.border = "2px solid #ff6961";
+        }
+      });
+
+      if (!allValid) {
+        const errorBox = document.getElementById("errorDisplay");
+        errorBox.textContent = errorMsg;
+        errorBox.style.display = "block";
+        return;
+      }
+
+      rows.forEach(row => {
+        const rawDate = row.cells[0].querySelector("input").value;
+        const dateParts = rawDate.split("-");
+        const date = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0].slice(2)}` : rawDate;
+        const task = row.cells[1].querySelector("select").value;
+        const notes = row.cells[2].querySelector("input").value;
+        const hours = row.cells[3].querySelector("input").value;
+        summaryHTML += `<li><strong>${date}</strong>: ${task} (${hours} hrs)` + (notes ? ` - ${notes}` : '') + `</li>`;
+      });
+
+      summaryHTML += "</ul>";
+      document.getElementById("summary").innerHTML = summaryHTML;
+      document.getElementById("hourForm").classList.add("hidden");
+      document.getElementById("confirmationPage").classList.remove("hidden");
+    }
+
+    function goBack() {
+      document.getElementById("confirmationPage").classList.add("hidden");
+      document.getElementById("hourForm").classList.remove("hidden");
+    }
+
+    function submitForm() {
+      const rows = document.querySelectorAll("#tableBody tr");
+
+      rows.forEach(row => {
+        const rawDate = row.cells[0].querySelector("input").value;
+        const dateParts = rawDate.split("-");
+        const date = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0].slice(2)}` : rawDate;
+        const task = row.cells[1].querySelector("select").value;
+        const notes = row.cells[2].querySelector("input").value;
+        const hours = row.cells[3].querySelector("input").value;
+
+        fetch("YOUR_WEBHOOK_URL_HERE", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            date,
+            trainer: selectedTrainer,
+            task,
+            notes,
+            hours
+          })
+        });
+      });
+
+      alert("Hours submitted successfully!");
+      location.reload();
+    }
+  </script>
+</body>
+</html>

@@ -82,14 +82,26 @@
   <!-- Trainer selection -->
   <div class="container" id="trainerSelect" style="max-width: 400px;">
     <h1>Select Your Name</h1>
-    <select id="trainerName" style="margin-bottom: 1rem; font-size: 1rem; padding: 0.75rem;">
-      <option value="">-- Select Trainer --</option>
-      <option value="Jo">Jo</option>
-      <option value="Nathan">Nathan</option>
-      <option value="Alexa">Alexa</option>
-      <option value="Mia">Mia</option>
-      <option value="James">James</option>
-    </select>
+   <select id="trainerName" style="margin-bottom: 1rem; font-size: 1rem; padding: 0.75rem;">
+  <option value="">-- Select Trainer --</option>
+</select>
+
+<script>
+  fetch("https://hook.eu2.make.com/xt1tstwqfqiz44onrsuhdjhh4xl8lip4")
+    .then(res => res.json())
+    .then(data => {
+      const dropdown = document.getElementById("trainerName");
+      data.trainers.forEach(trainer => {
+        const opt = document.createElement("option");
+        opt.value = trainer;
+        opt.textContent = trainer;
+        dropdown.appendChild(opt);
+      });
+    })
+    .catch(err => {
+      console.error("Failed to load trainers", err);
+    });
+</script>
     <div style="text-align: center;">
       <button onclick="startSubmission()" style="font-size: 1.25rem;">Continue</button>
     </div>

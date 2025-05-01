@@ -259,6 +259,22 @@
       const row = table.rows[0].cloneNode(true);
       row.querySelectorAll("input, select").forEach(input => input.value = "");
       table.appendChild(row);
+
+      // 🔽 New: populate client dropdown in the new row
+      const clientDropdown = row.querySelector(".clientDropdown");
+      fetch("https://script.google.com/macros/s/AKfycbzz4-h5E1hbadALB73j5g6yRKfnClXOChFuSX1CQ0AvdulaOduUknOOyWwZu8xoMthFWw/exec?type=clients")
+      .then(res => res.json())
+      .then(data => {
+        data.clients.forEach(client => {
+          const opt = document.createElement("option");
+          opt.value = client;
+          opt.textContent = client;
+          clientDropdown.appendChild(opt);
+      });
+    })
+    .catch(err => {
+      console.error("Failed to populate client dropdown in new row", err);
+    });
     }
 
     function proceedToConfirmation() {

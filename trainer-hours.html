@@ -69,6 +69,10 @@
       font-weight: 600;
       margin-top: 1rem;
     }
+    #thankYouPage h1 {
+      color: #a8ff9c;
+      font-size: 2rem;
+    }
     .hidden {
       display: none;
     }
@@ -185,6 +189,13 @@
     <div id="cancellationSummary"></div>
     <button onclick="submitForm()">Confirm</button>
     <button onclick="goBackToCancellations()">Go Back</button>
+  </div>
+
+  <!-- Confirmation Page -->
+  <div class="container hidden" id="thankYouPage">
+  <h1>✅ Submission Complete!</h1>
+  <p style="text-align:center;">Thank you, <span id="trainerNameFinal"></span> — your hours and cancellations have been submitted.</p>
+  <p style="text-align:center;">You can now close this page.</p>
   </div>
   
   <script>
@@ -324,6 +335,19 @@
             console.error("Failed to load clients", err);
           });
       </script>
+  
+   <script>
+      function submitForm() {
+      // Hide confirmation section
+      document.getElementById("confirmationPage").classList.add("hidden");
+
+      // Show thank-you page
+      document.getElementById("thankYouPage").classList.remove("hidden");
+    
+      // Display trainer name
+      document.getElementById("trainerNameFinal").textContent = selectedTrainer;
+      }
+   </script>
   
 </body>
 </html>

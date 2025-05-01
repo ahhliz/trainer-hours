@@ -262,7 +262,7 @@
 
       // 🔽 New: populate client dropdown in the new row
       const clientDropdown = row.querySelector(".clientDropdown");
-      fetch("https://script.google.com/macros/s/AKfycbzz4-h5E1hbadALB73j5g6yRKfnClXOChFuSX1CQ0AvdulaOduUknOOyWwZu8xoMthFWw/exec?type=clients")
+      fetch("https://script.google.com/macros/s/AKfycbyI5X_k0LiuUGM8jkXHBsLM13MNzt7Xzxn3ZOSB_lRmKP9WBxaaURTo4qVjCEm0dcyCng/exec?type=clients")
       .then(res => res.json())
       .then(data => {
         data.clients.forEach(client => {

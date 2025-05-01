@@ -186,25 +186,6 @@
     <button onclick="submitForm()">Confirm</button>
     <button onclick="goBackToCancellations()">Go Back</button>
   </div>
-
-   <script>
-        // Fetch client names and populate all .clientDropdowns
-        fetch("https://script.google.com/macros/s/AKfycbyI5X_k0LiuUGM8jkXHBsLM13MNzt7Xzxn3ZOSB_lRmKP9WBxaaURTo4qVjCEm0dcyCng/exec?type=clients")
-          .then(res => res.json())
-          .then(data => {
-            document.querySelectorAll(".clientDropdown").forEach(dropdown => {
-              data.clients.forEach(client => {
-                const opt = document.createElement("option");
-                opt.value = client;
-                opt.textContent = client;
-                dropdown.appendChild(opt);
-              });
-            });
-          })
-          .catch(err => {
-            console.error("Failed to load clients", err);
-          });
-      </script>
   
   <script>
     let selectedTrainer = "";
@@ -322,6 +303,27 @@
       document.getElementById("cancellationPage").classList.remove("hidden");
     }
   </script> 
+
+
+
+   <script>
+        // Fetch client names and populate all .clientDropdowns
+        fetch("https://script.google.com/macros/s/AKfycbyI5X_k0LiuUGM8jkXHBsLM13MNzt7Xzxn3ZOSB_lRmKP9WBxaaURTo4qVjCEm0dcyCng/exec?type=clients")
+          .then(res => res.json())
+          .then(data => {
+            document.querySelectorAll(".clientDropdown").forEach(dropdown => {
+              data.clients.forEach(client => {
+                const opt = document.createElement("option");
+                opt.value = client;
+                opt.textContent = client;
+                dropdown.appendChild(opt);
+              });
+            });
+          })
+          .catch(err => {
+            console.error("Failed to load clients", err);
+          });
+      </script>
   
 </body>
 </html>

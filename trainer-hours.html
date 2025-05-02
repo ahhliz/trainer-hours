@@ -337,16 +337,62 @@
       </script>
   
    <script>
-      function submitForm() {
-      // Hide confirmation section
-      document.getElementById("confirmationPage").classList.add("hidden");
+  async function submitForm() {
+    const trainer = selectedTrainer;
 
-      // Show thank-you page
-      document.getElementById("thankYouPage").classList.remove("hidden");
-    
-      // Display trainer name
-      document.getElementById("trainerNameFinal").textContent = selectedTrainer;
-      }
+    // 🟡 Collect Weekly Hours
+    const weeklyRows = document.querySelectorAll("#tableBody tr");
+    for (let row of weeklyRows) {
+      const date = row.cells[0].querySelector("input").value;
+      const task = row.cells[1].querySelector("select").value;
+      const notes = row.cells[2].querySelector("input").value;
+      const duration = row.cells[3].querySelector("input").value;
+
+      if (!date || !task || !duration) continue;
+
+      const payload = new URLSearchParams();
+      payload.append("date", date);
+      payload.append("trainer", trainer);
+      payload.append("task", task);
+      payload.append("notes", notes);
+      payload.append("duration", duration);
+      payload.append("cancelled", "false");
+
+      await fetch("https://script.google.com/macros/s/AKfycbyI5X_k0LiuUGM8jkXHBsLM13MNzt7Xzxn3ZOSB_lRmKP9WBxaaURTo4qVjCEm0dcyCng/exec", {
+        method: "POST",
+        body: payload
+      });
+    }
+
+    // 🟡 Collect Cancellations
+    const cancelRows = document.querySelectorAll("#cancellationsTable tbody tr");
+    for (let row of cancelRows) {
+      const date = row.cells[0].querySelector("input").value;
+      const client = row.cells[1].querySelector("select").value;
+      const notes = row.cells[2].querySelector("input").value;
+      const duration = row.cells[3].querySelector("input").value;
+
+      if (!date || !client || !duration) continue;
+
+      const payload = new URLSearchParams();
+      payload.append("date", date);
+      payload.append("trainer", trainer);
+      payload.append("client", client);
+      payload.append("notes", notes);
+      payload.append("duration", duration);
+      payload.append("cancelled", "true");
+
+      await fetch("https://script.google.com/macros/s/AKfycbyI5X_k0LiuUGM8jkXHBsLM13MNzt7Xzxn3ZOSB_lRmKP9WBxaaURTo4qVjCEm0dcyCng/exec", {
+        method: "POST",
+        body: payload
+      });
+    }
+
+    // ✅ Done — show thank you
+    document.getElementById("confirmationPage").classList.add("hidden");
+    document.getElementById("thankYouPage").classList.remove("hidden");
+    document.getElementById("trainerNameFinal").textContent = trainer;
+  }
    </script>
   
 </body>
